@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Flight</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 400px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px;
+            width: 100%;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <h2>Add a New Flight</h2>
+
+        {% if message %}
+            <p class="message">{{ message }}</p>
+        {% endif %}
+
+        <form method="POST">
+
+            <input type="text" name="flight_number" placeholder="Flight Number">
+
+            <label>Departure Time</label>
+            <input type="datetime-local" name="departure_time">
+
+            <label>Arrival Time</label>
+            <input type="datetime-local" name="arrival_time">
+
+            <label>Departure Airport</label>
+            <select name="departure_airport">
+                <option value="">Select Airport</option>
+                {% for a in airports %}
+                    <option value="{{ a.AirportID }}">{{ a.City }} (ID {{ a.AirportID }})</option>
+                {% endfor %}
+            </select>
+
+            <label>Arrival Airport</label>
+            <select name="arrival_airport">
+                <option value="">Select Airport</option>
+                {% for a in airports %}
+                    <option value="{{ a.AirportID }}">{{ a.City }} (ID {{ a.AirportID }})</option>
+                {% endfor %}
+            </select>
+
+            <label>Airline</label>
+            <select name="airline_id">
+                <option value="">Select Airline</option>
+                {% for al in airlines %}
+                    <option value="{{ al.AirlineID }}">{{ al.Name }} (ID {{ al.AirlineID }})</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Add Flight</button>
+
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu Options</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        .menu-section {
+            margin-bottom: 60px; /* adds space between the dropdown sections */
+        }
+
+        select {
+            font-size: 16px;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Customer Section -->
+    <div class="menu-section">
+        <h2>Customer Help</h2>
+        <select id="employeeMenu" onchange="goToPage(this)">
+            <option value="">-- Select an option --</option>
+            <option value="/add_passenger">Add Passenger</option>
+            <option value="/payment_issue">Fix Payment Issue</option>
+            <option value="/view_bookings">View Bookings</option>
+            <option value="/search_flights">Search Flights</option>
+            <option value="/book_flight">Book a Flight</option>
+        </select>
+    </div>
+
+    <script>
+        function goToPage(selectElement) {
+            const value = selectElement.value;
+            if (value) {
+                window.location.href = value;
+            }
+        }
+    </script>
+
+</body>
+</html>

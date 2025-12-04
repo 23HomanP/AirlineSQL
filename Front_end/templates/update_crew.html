@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Flight Crew</title>
+    <style>
+        body {
+            background: #f2f2f2;
+            font-family: Arial;
+            display: flex;
+            justify-content: center;
+            padding-top: 40px;
+        }
+
+        .container {
+            background: white;
+            width: 600px;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        table {
+            margin-top: 15px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #bbb;
+            padding: 8px;
+            text-align: center;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 12px;
+            width: 100%;
+            background: #007bff;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .message {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h2>Update Flight Crew</h2>
+
+    {% if message %}
+        <p class="message">{{ message }}</p>
+    {% endif %}
+
+    <form method="POST">
+        <label>Select Flight</label>
+        <select name="flight_id" onchange="this.form.submit()">
+            <option value="">Select Flight</option>
+            {% for f in flights %}
+                <option value="{{ f.FlightID }}"
+                    {% if selected_flight_id == f.FlightID|string %}selected{% endif %}>
+                    {{ f.FlightNumber }} (ID {{ f.FlightID }})
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    {% if selected_flight_id %}
+        <h3>Crew on This Flight</h3>
+
+        <div style="max-height:200px; overflow-y:auto; border:1px solid #ccc; padding:10px;">
+            <table>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                </tr>
+                {% for c in crew_list %}
+                <tr>
+                    <td>{{ c.EmployeeID }}</td>
+                    <td>{{ c.Name }}</td>
+                    <td>{{ c.Role }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <hr>
+
+        <!-- REMOVE CREW MEMBER -->
+        <h3>Remove Crew Member</h3>
+        <form method="POST">
+            <input type="hidden" name="flight_id" value="{{ selected_flight_id }}">
+            <input type="text" name="remove_employee_id" placeholder="Employee ID to Remove">
+            <input type="hidden" name="action" value="remove">
+            <button type="submit">Remove</button>
+        </form>
+
+        <hr>
+
+        <!-- ADD CREW MEMBER -->
+        <h3>Add Crew Member</h3>
+        <form method="POST">
+            <input type="hidden" name="flight_id" value="{{ selected_flight_id }}">
+            <input type="text" name="new_employee_id" placeholder="Employee ID">
+            <input type="text" name="new_role" placeholder="Role (e.g. Pilot, Attendant)">
+            <input type="hidden" name="action" value="add">
+            <button type="submit">Add Crew Member</button>
+        </form>
+
+    {% endif %}
+</div>
+</body>
+</html>

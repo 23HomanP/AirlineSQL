@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add / Update Employee</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 600px;
+            margin: auto;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+        }
+
+        label { font-weight: bold; }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            padding: 10px;
+            width: 100%;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover { background: #0056b3; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background: #eaeaea;
+        }
+
+        .message {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h2>Add / Update / Delete Employee</h2>
+
+    {% if message %}
+        <p class="message">{{ message }}</p>
+    {% endif %}
+
+    <form method="POST">
+
+        <label>Action:</label>
+        <select name="action" required>
+            <option value="">Select Action</option>
+            <option value="add">Add Employee</option>
+            <option value="update">Update Employee</option>
+            <option value="delete">Delete Employee</option>
+        </select>
+
+        <label>Employee ID (only for update/delete):</label>
+        <input type="number" name="employee_id" placeholder="Employee ID">
+
+        <label>Name:</label>
+        <input type="text" name="name" placeholder="John Doe">
+
+        <label>Date of Birth:</label>
+        <input type="date" name="dob">
+
+        <label>Phone:</label>
+        <input type="text" name="phone">
+
+        <label>Designation:</label>
+        <input type="text" name="designation">
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <h3>Existing Employees</h3>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>DOB</th>
+            <th>Phone</th>
+            <th>Designation</th>
+        </tr>
+        {% for emp in employees %}
+        <tr>
+            <td>{{ emp.EmployeeID }}</td>
+            <td>{{ emp.Name }}</td>
+            <td>{{ emp.DateofBirth }}</td>
+            <td>{{ emp.Phone }}</td>
+            <td>{{ emp.Designation }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+</body>
+</html>

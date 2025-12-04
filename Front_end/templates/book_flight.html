@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Flight</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        form {
+            width: 350px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            width: 100%;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .flight-info {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Booking Flight #{{ flight.FlightID }}</h2>
+
+    <div class="flight-info">
+        <p><strong>Plane Number:</strong> {{ flight.FlightNumber }}</p>
+        <p><strong>From:</strong> {{ flight.DepartureAirportName }} ({{ flight.DepartureCity }})</p>
+        <p><strong>To:</strong> {{ flight.ArrivalAirportName }} ({{ flight.ArrivalCity }})</p>
+        <p><strong>Departure:</strong> {{ flight.DepartureTime }}</p>
+        <p><strong>Arrival:</strong> {{ flight.ArrivalTime }}</p>
+    </div>
+
+    <form method="POST">
+
+        <input type="hidden" name="flight_id" value="{{ flight.FlightID }}">
+
+        <label>Passport Number:</label>
+        <input name="passport" required>
+
+        <label>Name:</label>
+        <input name="name" required>
+
+        <label>Date of Birth:</label>
+        <input type="date" name="dob" required>
+
+        <label>Phone:</label>
+        <input name="phone" required>
+
+        <label>Credit Card Number:</label>
+        <input name="credit_card" required>
+
+        <label>Amount to Pay:</label>
+        <input name="amount" required>
+
+        <button type="submit">Book Flight</button>
+    </form>
+
+</body>
+</html>

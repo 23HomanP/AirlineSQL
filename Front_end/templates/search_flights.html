@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flight Search</title>
+    <style>
+        body {
+            background-color: #0f3b2e;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding-top: 40px;
+        }
+
+        .search-box {
+            background-color: #3e4a53;
+            width: 480px;
+            padding: 25px;
+            border-radius: 6px;
+            color: white;
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: none;
+        }
+
+        .radio-group {
+            margin-top: 10px;
+        }
+
+        .radio-group input {
+            width: auto;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .row > div {
+            flex: 1;
+        }
+
+        .search-btn {
+            width: 100%;
+            background-color: #1b5e45;
+            color: white;
+            border: none;
+            padding: 14px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .search-btn:hover {
+            background-color: #144a36;
+        }
+
+        a {
+            color: #cdd8e0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="search-box">
+        <h2>Book a Flight</h2>
+
+        <div class="section-title">FLIGHT</div>
+
+        <form action="/search_flights" method="POST">
+
+            <!-- From / To -->
+            <div class="row">
+                <div>
+                    <label>From*</label>
+                    <input type="text" name="DepartureAirport" placeholder="Origin airport" required>
+                </div>
+
+                <div>
+                    <label>To*</label>
+                    <input type="text" name="ArrivalAirport" placeholder="Destination airport" required>
+                </div>
+            </div>
+
+            <!-- Dates -->
+            <div class="row">
+                <div>
+                    <label>Depart Date*</label>
+                    <input type="date" name="depart_date" required>
+                </div>
+
+                <div>
+                    <label>Return Date*</label>
+                    <input type="date" name="return_date">
+                </div>
+            </div>
+
+            <button class="search-btn" type="submit">SEARCH</button>
+
+        </form>
+
+        <br>
+    </div>
+</body>
+</html>

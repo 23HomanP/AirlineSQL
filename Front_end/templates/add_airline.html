@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Airlines</title>
+</head>
+<body>
+
+    <h2>Manage Airlines</h2>
+
+    {% if message %}
+        <p style="color:red;">{{ message }}</p>
+    {% endif %}
+
+    <form method="POST" action="/add_airline">
+
+        <label>Action:</label>
+        <select name="action" required>
+            <option value="add">Add Airline</option>
+            <option value="update">Update Airline</option>
+            <option value="delete">Delete Airline</option>
+        </select>
+        <br><br>
+
+        <label>Airline ID (required for Update or Delete):</label>
+        <input type="number" name="airline_id">
+        <br><br>
+
+        <label>Name (required for Add or Update):</label>
+        <input type="text" name="name">
+        <br><br>
+
+        <label>Phone (required for Add or Update):</label>
+        <input type="text" name="phone">
+        <br><br>
+
+        <button type="submit">Submit</button>
+
+    </form>
+
+    <h2>Existing Airlines</h2>
+
+<div style="height:200px; overflow-y:scroll; border:1px solid #ccc; padding:10px;">
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+        </tr>
+
+        {% for a in airlines %}
+        <tr>
+            <td>{{ a.AirlineID }}</td>
+            <td>{{ a.Name }}</td>
+            <td>{{ a.Phone }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+</div>
+</body>
+</html>
