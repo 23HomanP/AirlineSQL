@@ -288,6 +288,13 @@ def add_flight():
             message = "Error: All fields are required."
         elif departure_airport == arrival_airport:
             message = "Error: Departure and arrival airport cannot be the same."
+        elif departure_time and arrival_time:
+            from datetime import datetime
+            dt_dep = datetime.fromisoformat(departure_time)
+            dt_arr = datetime.fromisoformat(arrival_time)
+
+            if dt_dep >= dt_arr:
+                message = "Departure time must be before arrival time."
         else:
             try:
                 cursor2 = db.cursor()
@@ -308,23 +315,67 @@ def add_flight():
                            airports=airports,
                            airlines=airlines,
                            message=message)
-
 @app.route("/add_airline", methods=["GET", "POST"])
 def add_airline():
+    cursor = db.cursor(dictionary=True)
+    message = None
+    cursor.execute("SELECT AirlineID, Name, Phone FROM Airline ORDER BY Name")
+    airlines_list = cursor.fetchall()
+
     if request.method == "POST":
         action = request.form.get("action")
         airline_id = request.form.get("airline_id")
         name = request.form.get("name")
         phone = request.form.get("phone")
 
-        cursor = db.cursor()
+        # Validate AirlineID for update/delete
+        if action in ["update", "delete"]:
+            if not airline_id:
+                message = "Please enter an Airline ID"
+                return render_template("add_airline.html", airlines=airlines_list, message=message)
+            else:
+                try:
+                    airline_id = int(airline_id)
+                except ValueError:
+                    message = "Airline ID must be a number"
+                    return render_template("add_airline.html", airlines=airlines_list, message=message)
+
+        # Validate phone
+        if phone:
+            if not re.fullmatch(r"\d{3}-\d{3}-\d{4}", phone):
+                message = "Phone number must be in xxx-xxx-xxxx format."
+                return render_template("add_airline.html", airlines=airlines_list, message=message)
+
+            cursor.execute("SELECT * FROM Airline WHERE Phone = %s", (phone,))
+            existing_phone = cursor.fetchone()
+
+            if action == "add" and existing_phone:
+                                    message="Phone number already belongs to another airline."
+                                    return render_template("add_airline.html", airlines=airlines_list, message=message)
+
+            if action == "update" and existing_phone and existing_phone["AirlineID"] != airline_id:
+                                    message="Phone number already belongs to another airline."
+                                    return render_template("add_airline.html", airlines=airlines_list, message=message)
+        # Validate name
+        if name:
+            cursor.execute("SELECT * FROM Airline WHERE Name = %s", (name,))
+            existing_name = cursor.fetchone()
+
+            if action == "add" and existing_name:
+                                message=f"Airline '{existing_name['Name']}' already exists."
+                                return render_template("add_airline.html", airlines=airlines_list, message=message)
+
+            if action == "update" and existing_name and existing_name["AirlineID"] != airline_id:
+                                    message=f"Airline '{existing_name['Name']}' already exists."
+                                    return render_template("add_airline.html", airlines=airlines_list, message=message)
 
         # -----------------------------
         # ADD
         # -----------------------------
         if action == "add":
             if not name or not phone:
-                return render_template("add_airline.html", message="Error: Name and Phone cannot be empty for adding.")
+                    message="Error: Name and Phone cannot be empty."
+                    return render_template("add_airline.html", airlines=airlines_list, message=message)
 
             try:
                 cursor.execute("""
@@ -332,62 +383,64 @@ def add_airline():
                     VALUES (%s, %s)
                 """, (name, phone))
                 db.commit()
-                return render_template("add_airline.html", message="Airline added successfully!")
+                message="Airline added successfully!"
             except Exception as e:
-                return render_template("add_airline.html", message=f"Database Error: {e}")
+                                message=f"Database Error: {e}"
 
         # -----------------------------
         # UPDATE
         # -----------------------------
         if action == "update":
-            if not airline_id:
-                return render_template("add_airline.html", message="Error: AirlineID required for update.")
+            update_fields = []
+            update_values = []
 
-            if not name or not phone:
-                return render_template("add_airline.html", message="Error: Name and Phone cannot be empty for updating.")
+            if name:
+                update_fields.append("Name = %s")
+                update_values.append(name)
+            if phone:
+                update_fields.append("Phone = %s")
+                update_values.append(phone)
 
-            try:
-                cursor.execute("""
-                    UPDATE Airline
-                    SET Name=%s, Phone=%s
-                    WHERE AirlineID=%s
-                """, (name, phone, airline_id))
-                db.commit()
+            if not update_fields:
+                message = "No fields provided to update."
+            else:
+                update_values.append(airline_id)  # for WHERE clause
+                sql = f"UPDATE Airline SET {', '.join(update_fields)} WHERE AirlineID = %s"
+                try:
+                    cursor.execute(sql, update_values)
+                    db.commit()
 
-                if cursor.rowcount == 0:
-                    return render_template("add_airline.html", message="Error: AirlineID not found.")
-
-                return render_template("add_airline.html", message="Airline updated successfully!")
-            except Exception as e:
-                return render_template("add_airline.html", message=f"Database Error: {e}")
+                    if cursor.rowcount == 0:
+                        message = "Error: AirlineID not found."
+                    else:
+                        message = "Airline updated successfully!"
+                except Exception as e:
+                    message = f"Database Error: {e}"
 
         # -----------------------------
         # DELETE
         # -----------------------------
         if action == "delete":
-            if not airline_id:
-                return render_template("add_airline.html", message="Error: AirlineID required for delete.")
-
+            cursor.execute("SELECT * FROM Flight WHERE AirlineID = %s", (airline_id,))
+            flights = cursor.fetchall()
+            if flights:
+                    message=f"Error: Cannot delete AirlineID {airline_id} because it has associated flights."
             try:
                 cursor.execute("DELETE FROM Airline WHERE AirlineID = %s", (airline_id,))
                 db.commit()
 
                 if cursor.rowcount == 0:
-                    return render_template("add_airline.html", message="Error: AirlineID not found.")
+                            message="Error: AirlineID not found."
 
-                return render_template("add_airline.html", message="Airline deleted successfully!")
+                message="Airline deleted successfully!"
             except Exception as e:
-                return render_template("add_airline.html", message=f"Database Error: {e}")
+                                message=f"Database Error: {e}"
+    cursor.execute("SELECT AirlineID, Name, Phone FROM Airline ORDER BY Name")
+    airlines_list = cursor.fetchall()
     
-    # -----------------------------
-    # Fetch all airlines for display
-    # -----------------------------
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM Airline ORDER BY AirlineID")
-    airlines = cursor.fetchall()
+    return render_template("add_airline.html", airlines=airlines_list, message=message)
 
-    # Render template with message + airlines
-    return render_template("add_airline.html", airlines=airlines)
+
 
 @app.route("/update_crew", methods=["GET", "POST"])
 def update_crew():
@@ -620,9 +673,6 @@ def add_passenger():
     data = request.get_json()
 
     pass
-
-# Aggregate Dashboard Analytics Implementation
-
 
 if __name__ == '__main__':
     app.run(debug=True)
